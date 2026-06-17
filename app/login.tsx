@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { auth } from "../config/firebase";
 
-export default function LoginScreen({ navigation }) {
+type Props = {
+  navigation: any;
+};
+
+export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +24,12 @@ export default function LoginScreen({ navigation }) {
       await signInWithEmailAndPassword(auth, email, password);
       // navigasi otomatis ditangani oleh auth state listener di App.js
     } catch (error) {
-  const err = error as { code?: string };
-  let message = "Terjadi kesalahan. Silakan coba lagi.";
-  if (err.code === "auth/user-not-found") message = "Akun tidak ditemukan.";
-  if (err.code === "auth/wrong-password") message = "Kata sandi salah.";
-  if (err.code === "auth/invalid-email") message = "Format email tidak valid.";
-  Alert.alert("Gagal Masuk", message);
-}
+      const err = error as { code?: string };
+      let message = "Terjadi kesalahan. Silakan coba lagi.";
+      if (err.code === "auth/user-not-found") message = "Akun tidak ditemukan.";
+      if (err.code === "auth/wrong-password") message = "Kata sandi salah.";
+      if (err.code === "auth/invalid-email") message = "Format email tidak valid.";
+      Alert.alert("Gagal Masuk", message);
     } finally {
       setLoading(false);
     }
