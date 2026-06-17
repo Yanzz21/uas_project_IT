@@ -20,11 +20,13 @@ export default function LoginScreen({ navigation }) {
       await signInWithEmailAndPassword(auth, email, password);
       // navigasi otomatis ditangani oleh auth state listener di App.js
     } catch (error) {
-      let message = "Terjadi kesalahan. Silakan coba lagi.";
-      if (error.code === "auth/user-not-found") message = "Akun tidak ditemukan.";
-      if (error.code === "auth/wrong-password") message = "Kata sandi salah.";
-      if (error.code === "auth/invalid-email") message = "Format email tidak valid.";
-      Alert.alert("Gagal Masuk", message);
+  const err = error as { code?: string };
+  let message = "Terjadi kesalahan. Silakan coba lagi.";
+  if (err.code === "auth/user-not-found") message = "Akun tidak ditemukan.";
+  if (err.code === "auth/wrong-password") message = "Kata sandi salah.";
+  if (err.code === "auth/invalid-email") message = "Format email tidak valid.";
+  Alert.alert("Gagal Masuk", message);
+}
     } finally {
       setLoading(false);
     }
