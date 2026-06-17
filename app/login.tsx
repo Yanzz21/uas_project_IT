@@ -40,7 +40,7 @@ export default function LoginScreen() {
           <View style={styles.logoBox}>
             <Text style={styles.logoEmoji}>🧁</Text>
           </View>
-          <Text style={styles.appName}>Sweetly</Text>
+          <Text style={styles.appName}>toko kue Al rusdak</Text>
           <Text style={styles.tagline}>Toko kue terbaik untuk kamu</Text>
         </View>
 

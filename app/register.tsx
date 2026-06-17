@@ -11,7 +11,6 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<"admin1" | "admin2">("admin2");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -34,15 +33,13 @@ export default function RegisterScreen() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
 
-      // password TIDAK disimpan di Firestore, karena sudah aman ter-hash oleh Firebase Auth
       await setDoc(doc(db, "users", uid), {
         id_user: uid,
         nama,
         email,
-        role,
+        role: "admin2", // semua akun baru otomatis Staff; Owner di-set manual lewat Firestore Console
         created_at: new Date().toISOString(),
       });
-      // navigasi otomatis ditangani oleh listener di app/_layout.tsx
     } catch (error) {
       const err = error as { code?: string };
       let message = "Terjadi kesalahan. Silakan coba lagi.";
@@ -62,7 +59,7 @@ export default function RegisterScreen() {
           <View style={styles.logoBox}>
             <Text style={styles.logoEmoji}>🧁</Text>
           </View>
-          <Text style={styles.appName}>Sweetly</Text>
+          <Text style={styles.appName}>toko kue Al rusdak</Text>
           <Text style={styles.tagline}>Buat akun baru</Text>
         </View>
 
@@ -94,16 +91,6 @@ export default function RegisterScreen() {
           <View style={styles.inputWrapper}>
             <Text style={styles.icon}>🔒</Text>
             <TextInput style={[styles.input, { flex: 1 }]} placeholder="Ulangi kata sandi" placeholderTextColor="#aaa" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry={!showPassword} />
-          </View>
-
-          <Text style={styles.label}>DAFTAR SEBAGAI</Text>
-          <View style={styles.roleRow}>
-            <TouchableOpacity style={[styles.roleBtn, role === "admin1" && styles.roleBtnActive]} onPress={() => setRole("admin1")}>
-              <Text style={[styles.roleBtnText, role === "admin1" && styles.roleBtnTextActive]}>Admin 1 (Owner)</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.roleBtn, role === "admin2" && styles.roleBtnActive]} onPress={() => setRole("admin2")}>
-              <Text style={[styles.roleBtnText, role === "admin2" && styles.roleBtnTextActive]}>Admin 2 (Staff)</Text>
-            </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={[styles.btnPrimary, loading && styles.btnDisabled]} onPress={handleRegister} disabled={loading}>
@@ -138,11 +125,6 @@ const styles = StyleSheet.create({
   inputWrapper: { flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: "#e0e0e0", borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, backgroundColor: "#fafafa", marginBottom: 16, gap: 10 },
   icon: { fontSize: 16 },
   input: { fontSize: 15, color: "#333", flex: 1 },
-  roleRow: { flexDirection: "row", gap: 10, marginBottom: 20 },
-  roleBtn: { flex: 1, borderWidth: 1, borderColor: "#e0e0e0", borderRadius: 12, paddingVertical: 12, alignItems: "center" },
-  roleBtnActive: { backgroundColor: PURPLE, borderColor: PURPLE },
-  roleBtnText: { fontSize: 13, fontWeight: "500", color: "#666" },
-  roleBtnTextActive: { color: "#fff" },
   btnPrimary: { backgroundColor: PURPLE, borderRadius: 14, paddingVertical: 15, alignItems: "center", marginBottom: 20 },
   btnDisabled: { opacity: 0.6 },
   btnPrimaryText: { color: "#fff", fontWeight: "600", fontSize: 16 },

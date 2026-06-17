@@ -22,7 +22,7 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.greeting}>Halo, {nama || "Admin"} 👋</Text>
-      <Text style={styles.subtitle}>Selamat datang kembali di Sweetly</Text>
+      <Text style={styles.subtitle}>Selamat datang kembali di toko kue Al rusdak</Text>
 
       <View style={styles.cardRow}>
         <View style={styles.statCard}>

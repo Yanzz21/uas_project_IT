@@ -3,7 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -16,6 +16,7 @@ import {
   View,
 } from "react-native";
 import { db, storage } from "../../config/firebase";
+import { useUserRole } from "../../hooks/useUserRole";
 
 const PURPLE = "#534AB7";
 const KATEGORI_LIST = ["Kue Tart", "Cupcake", "Brownies", "Cookies", "Donat", "Lainnya"];
@@ -28,6 +29,15 @@ export default function TambahProdukScreen() {
   const [stok, setStok] = useState("");
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const { role, loading: roleLoading } = useUserRole();
+
+  useEffect(() => {
+    if (!roleLoading && role !== "admin1") {
+      Alert.alert("Akses Ditolak", "Cuma Owner yang bisa menambah produk.");
+      router.back();
+    }
+  }, [role, roleLoading]);
 
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();

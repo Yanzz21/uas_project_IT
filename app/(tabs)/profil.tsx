@@ -1,7 +1,7 @@
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { auth, db } from "../../config/firebase";
 
 const PURPLE = "#534AB7";
@@ -26,10 +26,15 @@ export default function ProfilScreen() {
   }, []);
 
   const handleLogout = () => {
-    Alert.alert("Keluar", "Yakin mau keluar dari akun?", [
-      { text: "Batal", style: "cancel" },
-      { text: "Keluar", style: "destructive", onPress: () => signOut(auth) },
-    ]);
+    if (Platform.OS === "web") {
+      const confirmed = window.confirm("Yakin mau keluar dari akun?");
+      if (confirmed) signOut(auth);
+    } else {
+      Alert.alert("Keluar", "Yakin mau keluar dari akun?", [
+        { text: "Batal", style: "cancel" },
+        { text: "Keluar", style: "destructive", onPress: () => signOut(auth) },
+      ]);
+    }
   };
 
   return (

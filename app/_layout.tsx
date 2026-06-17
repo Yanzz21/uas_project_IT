@@ -20,11 +20,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (initializing) return;
-    const inTabsGroup = segments[0] === "(tabs)";
+    const isAuthScreen = segments[0] === "login" || segments[0] === "register";
 
-    if (!user && inTabsGroup) {
+    if (!user && !isAuthScreen) {
       router.replace("/login");
-    } else if (user && !inTabsGroup) {
+    } else if (user && isAuthScreen) {
       router.replace("/(tabs)");
     }
   }, [user, initializing, segments]);
