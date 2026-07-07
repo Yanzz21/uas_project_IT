@@ -18,7 +18,7 @@ import { db } from "../../config/firebase";
 import { useUserRole } from "../../hooks/useUserRole";
 
 const PURPLE = "#534AB7";
-const KATEGORI_LIST = ["Kue Tart", "Cupcake", "Brownies", "Cookies", "Donat", "Lainnya"];
+const KATEGORI_LIST = ["Kue Tart", "Bolu", "Brownies", "Cookies", "Donat", "Lainnya"];
 
 export default function TambahProdukScreen() {
   const router = useRouter();

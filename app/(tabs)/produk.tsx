@@ -7,7 +7,7 @@ import { db } from "../../config/firebase";
 import { useUserRole } from "../../hooks/useUserRole";
 
 const PURPLE = "#534AB7";
-const KATEGORI_LIST = ["Semua", "Kue Tart", "Cupcake", "Brownies", "Cookies", "Donat", "Lainnya"];
+const KATEGORI_LIST = ["Semua", "Kue Tart", "Bolu", "Brownies", "Cookies", "Donat", "Lainnya"];
 
 type Produk = {
   id: string;
