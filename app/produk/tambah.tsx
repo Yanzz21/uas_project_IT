@@ -2,7 +2,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,7 +14,7 @@ import {
   TextInput, TouchableOpacity,
   View,
 } from "react-native";
-import { db, storage } from "../../config/firebase";
+import { db } from "../../config/firebase";
 import { useUserRole } from "../../hooks/useUserRole";
 
 const PURPLE = "#534AB7";
@@ -47,9 +46,7 @@ export default function TambahProdukScreen() {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.6,
-      aspect: [1, 1],
-      allowsEditing: true,
+      quality: 0.4,
     });
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
@@ -72,12 +69,15 @@ export default function TambahProdukScreen() {
     try {
       let gambarUrl = "";
       if (imageUri) {
+        // Convert ke base64 — disimpan langsung ke Firestore, tanpa Firebase Storage
         const response = await fetch(imageUri);
         const blob = await response.blob();
-        const filename = `produk/${Date.now()}.jpg`;
-        const storageRef = ref(storage, filename);
-        await uploadBytes(storageRef, blob);
-        gambarUrl = await getDownloadURL(storageRef);
+        gambarUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
       }
 
       await addDoc(collection(db, "produk"), {

@@ -2,7 +2,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,7 +14,7 @@ import {
   TextInput, TouchableOpacity,
   View,
 } from "react-native";
-import { db, storage } from "../../config/firebase";
+import { db } from "../../config/firebase";
 import { useUserRole } from "../../hooks/useUserRole";
 
 const PURPLE = "#534AB7";
@@ -77,9 +76,7 @@ export default function DetailProdukScreen() {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.6,
-      aspect: [1, 1],
-      allowsEditing: true,
+      quality: 0.4,
     });
     if (!result.canceled) {
       setImageUri(result.assets[0].uri);
@@ -101,13 +98,17 @@ export default function DetailProdukScreen() {
     setSaving(true);
     try {
       let gambarUrl = produk?.gambarUrl || "";
+
+      // Kalau gambar diganti (bukan URL lama dan bukan base64 lama)
       if (imageUri && imageUri !== produk?.gambarUrl) {
         const response = await fetch(imageUri);
         const blob = await response.blob();
-        const filename = `produk/${Date.now()}.jpg`;
-        const storageRef = ref(storage, filename);
-        await uploadBytes(storageRef, blob);
-        gambarUrl = await getDownloadURL(storageRef);
+        gambarUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
       }
 
       await updateDoc(doc(db, "produk", productId), {
@@ -133,13 +134,6 @@ export default function DetailProdukScreen() {
     const doDelete = async () => {
       try {
         await deleteDoc(doc(db, "produk", productId));
-        if (produk?.gambarUrl) {
-          try {
-            await deleteObject(ref(storage, produk.gambarUrl));
-          } catch {
-            // gambar mungkin udah gak ada, abaikan
-          }
-        }
         router.replace("/(tabs)/produk" as any);
       } catch (error) {
         console.error(error);

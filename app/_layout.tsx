@@ -38,10 +38,13 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="register" />
-    </Stack>
-  );
+  <Stack screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="(tabs)" />
+    <Stack.Screen name="login" />
+    <Stack.Screen name="register" />
+    <Stack.Screen name="notifikasi" />   {/* ← tambah ini */}
+    <Stack.Screen name="produk" />
+    <Stack.Screen name="refill" />
+  </Stack>
+);
 }
